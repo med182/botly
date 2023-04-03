@@ -25,7 +25,7 @@ class UrlsController extends AbstractController
                 ],
                 'constraints' => [
                     new NotBlank(['message' => 'You need to enter an URL']),
-                    new Url(['message' => 'The URL entered is invalid'])
+                    new Url(['message' => 'The URL entered is invalid.'])
                 ]
             ])
             ->getForm();
