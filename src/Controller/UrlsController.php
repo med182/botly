@@ -11,6 +11,17 @@ class UrlsController extends AbstractController
     #[Route('/', name: 'app_url_create')]
     public function create(): Response
     {
-        return $this->render('urls/create.html.twig', []);
+        $form = $this->createFormBuilder()
+            ->add('original', null, [
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Enter your Url !'
+                ]
+            ])
+            ->getForm();
+
+
+
+        return $this->render('urls/create.html.twig', ['form' => $form->createView()]);
     }
 }
