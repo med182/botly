@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class UrlsController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    #[Route('/', name: 'app_url_create')]
+    #[Route('/', name: 'app_url_create', methods: ["GET", "POST"])]
 
     public function create(Request $request, UrlRepository $urlRepository): Response
     {
@@ -40,7 +40,7 @@ class UrlsController extends AbstractController
             $url = $urlRepository->findOneBy(['Original' => $form['original']->getData()]);
 
             if ($url) {
-                return $this->render('urls/preview.html.twig', compact('url'));
+                return $this->redirectToRoute('app_urls_preview', ['shortened' => $url->getShortened()]);
             }
         }
 
@@ -50,7 +50,13 @@ class UrlsController extends AbstractController
     }
 
 
-    #[Route('/{shortened}', name: 'app_urls_show')]
+    #[Route('/{shortened}/preview', name: 'app_urls_preview', methods: 'GET')]
+    public function preview(Url $url): Response
+    {
+        return $this->render('urls/preview.html.twig', compact('url'));
+    }
+
+    #[Route('/{shortened}', name: 'app_urls_show', methods: 'GET')]
     public function show(Url $url): Response
     {
         return $this->redirect($url->getOriginal());
