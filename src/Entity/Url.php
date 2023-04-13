@@ -17,7 +17,7 @@ class Url
     #[ORM\Column(length: 255, unique: true)]
     private ?string $Original = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 10, unique: true)]
     private ?string $shortened = null;
 
     public function getId(): ?int
