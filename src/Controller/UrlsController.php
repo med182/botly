@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
+use App\Utils\Str;
 use App\Entity\Url;
 use Doctrine\ORM\EntityManager;
 use App\Repository\UrlRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Constraints\Url as UrlConstraints;
@@ -30,6 +31,7 @@ class UrlsController extends AbstractController
 
     public function create(Request $request, EntityManagerInterface $em): Response
     {
+
 
         $form = $this->createFormBuilder()
             ->add('original', null, [
@@ -83,7 +85,7 @@ class UrlsController extends AbstractController
 
     private function getUniqueShortenedString()
     {
-        $shortened =  substr(bin2hex(random_bytes(32)), 0, 6);
+        $shortened =  Str::random(6);
         if ($this->urlRepository->findOneBy(compact('shortened'))) {
             return $this->getUniqueShortenedString();
         }
