@@ -3,21 +3,32 @@
 namespace App\Controller;
 
 use App\Entity\Url;
+use Doctrine\ORM\EntityManager;
 use App\Repository\UrlRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Symfony\Component\Validator\Constraints\Url as UrlConstraints;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Constraints\Url as UrlConstraints;
 
 class UrlsController extends AbstractController
+
+
 {
+    private $urlRepository;
+
+    function __construct(UrlRepository $urlRepository)
+    {
+        $this->urlRepository = $urlRepository;
+    }
+
     #[Route('/', name: 'app_home')]
     #[Route('/', name: 'app_url_create', methods: ["GET", "POST"])]
 
-    public function create(Request $request, UrlRepository $urlRepository): Response
+    public function create(Request $request, EntityManagerInterface $em): Response
     {
 
         $form = $this->createFormBuilder()
@@ -37,11 +48,19 @@ class UrlsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
 
-            $url = $urlRepository->findOneBy(['Original' => $form['original']->getData()]);
+            $url = $this->urlRepository->findOneBy(['Original' => $form['original']->getData()]);
 
             if ($url) {
                 return $this->redirectToRoute('app_urls_preview', ['shortened' => $url->getShortened()]);
             }
+
+            $url = new Url;
+            $url->setOriginal($form['original']->getData());
+            $url->setShortened($this->getUniqueShortenedString());
+            $em->persist($url);
+            $em->flush();
+
+            return $this->redirectToRoute('app_urls_preview', ['shortened' => $url->getShortened()]);
         }
 
 
@@ -60,5 +79,14 @@ class UrlsController extends AbstractController
     public function show(Url $url): Response
     {
         return $this->redirect($url->getOriginal());
+    }
+
+    private function getUniqueShortenedString()
+    {
+        $shortened =  substr(bin2hex(random_bytes(32)), 0, 6);
+        if ($this->urlRepository->findOneBy(compact('shortened'))) {
+            return $this->getUniqueShortenedString();
+        }
+        return $shortened;
     }
 }
