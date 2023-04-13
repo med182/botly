@@ -26,8 +26,8 @@ class UrlsController extends AbstractController
         $this->urlRepository = $urlRepository;
     }
 
-    #[Route('/', name: 'app_home')]
-    #[Route('/', name: 'app_url_create', methods: ["GET", "POST"])]
+    #[Route('/', name: 'app_home', methods: ["GET", "POST"])]
+
 
     public function create(Request $request, EntityManagerInterface $em): Response
     {
