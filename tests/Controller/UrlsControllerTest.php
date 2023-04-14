@@ -75,6 +75,7 @@ class UrlsControllerTest extends WebTestCase
         $this->assertSelectorTextContains('a', 'http://localhost/' . $shortened);
         $this->assertSelectorTextContains('body', 'Go back home' . $shortened);
         $this->assertSame('Go back home', $crawler->filter('a')->eq(1)->text());
+        dd($crawler->filter(' a')->eq(0)->text());
 
         $client->clickLink('Go back home');
         $this->assertRouteSame('app_home');
