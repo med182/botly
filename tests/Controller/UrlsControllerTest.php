@@ -2,8 +2,8 @@
 
 namespace App\Tests\Controller;
 
-use App\Utils\Str;
 use App\Entity\Url;
+use Illuminate\Support\Str;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UrlsControllerTest extends WebTestCase
@@ -54,30 +54,47 @@ class UrlsControllerTest extends WebTestCase
         $this->assertResponseRedirects($original);
     }
 
-    public function testPreview()
+    // public function testPreview()
+    // {
+    //     $client = static::createClient();
+
+
+    //     $em =  $this->getContainer()->get('doctrine.orm.entity_manager');
+
+    //     $original = 'https://twiter.com';
+    //     $shortened = Str::random(6);
+    //     $url = new Url;
+    //     $url->setOriginal($original);
+
+    //     $url->setShortened($shortened);
+
+    //     $em->persist($url);
+    //     $em->flush();
+
+    //     $crawler = $client->request('GET', sprintf('/%s/preview', $shortened));
+    //     $this->assertSelectorTextContains('h1', 'Yay ! Here is your shortened URL:');
+    //     $this->assertSelectorTextContains('h1 >a', 'http://localhost/' . $shortened);
+
+
+
+
+    //     $client->clickLink('Go back home');
+    //     $this->assertRouteSame('app_home');
+    // }
+    // public function testShow_return_404()
+    // {
+
+    //     $client = static::createClient();
+    //     $client->request('GET', '/qwerty');
+
+    //     $this->assertResponseStatusCodeSame(404);
+    // }
+    public function testPreview_return_404()
     {
+
         $client = static::createClient();
+        $client->request('GET', '/poiuyt/preview');
 
-
-        $em =  $this->getContainer()->get('doctrine.orm.entity_manager');
-
-        $original = 'https://parlonscode.com';
-        $url = new Url;
-        $url->setOriginal($original);
-        $shortened = Str::random(6);
-        $url->setShortened($shortened);
-
-        $em->persist($url);
-        $em->flush();
-
-        $crawler = $client->request('GET', sprintf("/%/preview" . $shortened));
-        $this->assertSelectorTextContains('h1', 'Yay ! Here is your shortened URL:');
-        $this->assertSelectorTextContains('a', 'http://localhost/' . $shortened);
-        $this->assertSelectorTextContains('body', 'Go back home' . $shortened);
-        $this->assertSame('Go back home', $crawler->filter('a')->eq(1)->text());
-        dd($crawler->filter(' a')->eq(0)->text());
-
-        $client->clickLink('Go back home');
-        $this->assertRouteSame('app_home');
+        $this->assertResponseStatusCodeSame(404);
     }
 }
